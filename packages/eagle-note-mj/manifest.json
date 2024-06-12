@@ -4,13 +4,10 @@
   "manifest_version": 3,
   "description": "Uses the chrome.scripting API to inject JavaScript into web pages.",
   "permissions": ["scripting", "webNavigation"],
-  "host_permissions": ["https://example.com/*"],
-  "content_scripts": [
-    {
-      "js": ["scripts/content.js"],
-      "matches": ["https://www.midjourney.com/*"]
-    }
-  ],
+  "host_permissions": ["https://www.midjourney.com/*"],
+  "background": {
+    "service_worker": "scripts/ws.js"
+  },
   "action": {
     "default_icon": {
       "16": "images/logo.png",
