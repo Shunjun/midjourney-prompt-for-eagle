@@ -2,6 +2,41 @@ import { JobInfo } from "./types";
 
 const originalFetch = window.fetch;
 
+const jobsUrls = [
+  "https://www.midjourney.com/api/app/job-status",
+  "https://www.midjourney.com/api/app/recent-jobs",
+  "https://www.midjourney.com/api/pg/thomas-jobs",
+];
+
+const idRegex = /(?<id>[^/]*-[^/]*-[^/]*-[^/]*-[^/]*)/;
+const urlRegex = /(http|https):\/\/([\w.]+\/?)\S*/;
+
+const shortMap = {
+  ar: "aspect",
+  q: "quality",
+  r: "repeat",
+  s: "stylize",
+  v: "version",
+};
+
+const ignoreParameters = ["fast", "chaos", "repeat", "turbo"];
+
+const usefulValueTags = [
+  "aspect",
+  "iw",
+  "quality",
+  "style",
+  "stop",
+  "weird",
+  "niji",
+  "version",
+];
+
+const promptMap: Map<string, JobInfo> = new Map();
+
+let fetchingCount = 0;
+const tasks: (() => void)[] = [];
+
 // 重写 XMLHttpRequest
 class OverXMLHttpRequest extends window.XMLHttpRequest {
   constructor() {
@@ -11,11 +46,8 @@ class OverXMLHttpRequest extends window.XMLHttpRequest {
         // 请求完成
         if (isJobsUrl(this.responseURL)) {
           try {
-            const json = JSON.parse(this.responseText);
-            handleResponseData({
-              url: this.responseURL,
-              data: json,
-            });
+            const data = JSON.parse(this.responseText);
+            responseTask(this.responseURL, data);
           } catch (err) {
             // noop
           }
@@ -32,29 +64,31 @@ window.fetch = async (...args) => {
   const cloneResponse = response.clone();
   if (isJobsUrl(cloneResponse.url)) {
     const data = await cloneResponse.json(); // 假设返回的是 JSON 数据
-    requestIdleCallback(() => {
-      handleResponseData({
-        url: response.url,
-        data,
-      });
-    });
+    responseTask(response.url, data);
   }
   return response; // 返回原始的 response
 };
 
-const jobsUrls = [
-  "https://www.midjourney.com/api/app/job-status",
-  "https://www.midjourney.com/api/app/recent-jobs",
-  "https://www.midjourney.com/api/pg/thomas-jobs",
-];
+function responseTask(url: string, data: any) {
+  fetchingCount++;
+  requestIdleCallback(() => {
+    handleResponseData({
+      url,
+      data,
+    });
+    fetchingCount--;
+    if (fetchingCount === 0) {
+      tasks.forEach((task) => task());
+      tasks.length = 0;
+    }
+  });
+}
 
 function isJobsUrl(url: string) {
   return jobsUrls.some((jobUrl) => {
     return new RegExp(`${jobUrl}.*`).test(url);
   });
 }
-
-const promptMap: Map<string, JobInfo> = new Map();
 
 function handleResponseData(params: { url: string; data: any }) {
   const { url, data } = params || {};
@@ -103,11 +137,6 @@ function getPrompts(jobList: any[]) {
   });
 }
 
-const config = {
-  childList: true,
-  subtree: true,
-};
-
 function observeBody() {
   // 创建一个观察器实例
   const observer = new MutationObserver((mutationsList, observer) => {
@@ -122,6 +151,10 @@ function observeBody() {
     }
   });
 
+  const config = {
+    childList: true,
+    subtree: true,
+  };
   // 开始观察 body 元素
   observer.observe(document.body, config);
   document.removeEventListener("DOMContentLoaded", handleContentLoaded);
@@ -134,9 +167,8 @@ function traverseNode(node: Node) {
       addAttributesOnImg(node);
     }
     if (isAnchorNode(node)) {
-      console.log("A new canvas element was added.");
+      addAttributesOnAnchor(node);
     }
-
     node.childNodes.forEach((childNode) => {
       traverseNode(childNode);
     });
@@ -149,14 +181,85 @@ function handleContentLoaded() {
 
 document.addEventListener("DOMContentLoaded", handleContentLoaded);
 
-function addAttributesOnImg(node: HTMLImageElement) {
-  const id = getIdFromSrc(node.src);
+function addAttributesOnAnchor(node: HTMLAnchorElement) {
+  if (fetchingCount) {
+    tasks.push(() => addAttributesOnAnchor(node));
+    return;
+  }
+  const styleStr = node.getAttribute("style") || "";
+  const id = getIdFromSrc(styleStr);
 
-  console.log(promptMap);
+  if (!id) return;
+  addAttributes(node, id);
+}
+
+function addAttributesOnImg(node: HTMLImageElement) {
+  if (fetchingCount) {
+    tasks.push(() => addAttributesOnImg(node));
+    return;
+  }
+  const id = getIdFromSrc(node.src);
+  if (!id) return;
+  addAttributes(node, id);
+}
+
+function addAttributes(node: HTMLElement, id: string) {
+  const job = promptMap.get(id);
+  if (job) {
+    const annotation = getAnnotation(job);
+    const tag = genTag(job);
+    node.setAttribute("eagle-title", id);
+    node.setAttribute("eagle-annotation", annotation);
+    node.setAttribute("eagle-tags", tag);
+  }
+}
+
+function genTag(job: JobInfo) {
+  const { full_command = "" } = job;
+  const words = full_command.split(" ").filter(Boolean);
+  const tags: string[] = [];
+
+  let index = 0;
+  while (index < words.length) {
+    const word = words[index];
+
+    if (word.startsWith("--")) {
+      let parameter = word.replace("--", "");
+      if (parameter in shortMap) {
+        parameter = shortMap[parameter as keyof typeof shortMap];
+      }
+
+      const values = [];
+      if (usefulValueTags.includes(parameter)) {
+        values.push("");
+        while (
+          index < words.length &&
+          words[index + 1] &&
+          !words[index + 1].startsWith("--")
+        ) {
+          index++;
+          values.push(words[index]);
+        }
+      }
+      tags.push(parameter + values.join(" "));
+    }
+
+    if (urlRegex.test(word)) {
+      tags.push("垫图");
+    }
+
+    index++;
+  }
+
+  return tags.join(",");
+}
+
+function getAnnotation(job: JobInfo) {
+  return job.full_command;
 }
 
 function getIdFromSrc(src: string) {
-  const { groups } = src.match(/(?<id>[^/]*-[^/]*-[^/]*-[^/]*-[^/]*)/) || {};
+  const { groups } = src.match(idRegex) || {};
   return groups?.id;
 }
 

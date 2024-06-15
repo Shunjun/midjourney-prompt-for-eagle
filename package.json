@@ -12,6 +12,9 @@
   "author": "Shunzi <tobyzsj@gmail.com>",
   "license": "ISC",
   "devDependencies": {
-    "typescript": "^5.4.5"
+    "@types/chrome": "^0.0.268",
+    "@types/node": "^20.14.2",
+    "typescript": "^5.4.5",
+    "vite": "^5.3.1"
   }
 }
