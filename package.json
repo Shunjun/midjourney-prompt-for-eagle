@@ -10,5 +10,8 @@
     "extensions"
   ],
   "author": "Shunzi <tobyzsj@gmail.com>",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
 }
