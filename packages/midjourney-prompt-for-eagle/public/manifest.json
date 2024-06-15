@@ -1,20 +1,20 @@
 {
-  "name": "Eagle Note MJ",
-  "version": "0.1",
+  "name": "Midjourney Prompt For Eagle",
+  "version": "0.0.1",
   "manifest_version": 3,
-  "description": "Uses the chrome.scripting API to inject JavaScript into web pages.",
-  "permissions": ["scripting", "webNavigation", "webRequest"],
+  "description": "save prompt on midjourney for eagle.",
+  "author": {
+    "email": "tobyzsj@gmail.com"
+  },
+  "permissions": ["scripting", "webNavigation"],
   "host_permissions": ["https://www.midjourney.com/*"],
   "background": {
     "service_worker": "ws.js"
   },
-
   "action": {
     "default_icon": {
-      "16": "images/logo.png",
-      "32": "images/logo.png",
-      "48": "images/logo.png",
-      "128": "images/logo.png"
+      "32": "images/icon32.png",
+      "128": "images/icon128.png"
     }
   }
 }

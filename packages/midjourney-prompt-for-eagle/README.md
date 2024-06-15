@@ -1,6 +1,6 @@
 # Midjourney Prompt For Eagle
 
-[中文文档](./README_CH.md)
+[中文文档](./README_zh-cn.md)
 
 | Node：This extensions only used for Eagle 4.0
 | [get here](https://cn.eagle.cool/blog/post/4.0-beta)
