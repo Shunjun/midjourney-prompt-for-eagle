@@ -1,0 +1,21 @@
+{
+  "name": "midjourney-prompt-for-eagle",
+  "private": true,
+  "version": "0.0.1",
+  "description": "save prompt on midjourney for eagle",
+  "author": "Shunzi <tobyzsj@gmail.com>",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "vite build"
+  },
+  "keywords": [
+    "midjourney",
+    "eagle",
+    "prompt",
+    "chrome extension"
+  ],
+  "license": "ISC",
+  "devDependencies": {}
+}
