@@ -3,11 +3,12 @@
   "version": "0.1",
   "manifest_version": 3,
   "description": "Uses the chrome.scripting API to inject JavaScript into web pages.",
-  "permissions": ["scripting", "webNavigation"],
+  "permissions": ["scripting", "webNavigation", "webRequest"],
   "host_permissions": ["https://www.midjourney.com/*"],
   "background": {
-    "service_worker": "scripts/ws.js"
+    "service_worker": "ws.js"
   },
+
   "action": {
     "default_icon": {
       "16": "images/logo.png",
