@@ -10,8 +10,11 @@ Add prompt on image annotation when using Eagle to collect images on www.midjour
 ## Usage
 
 1. Drag the image to the Eagle floating window
-   [image](./images/CleanShot%202024-06-15%20at%2022.38.23@2x.png)
+   ![image](./images/CleanShot%202024-06-15%20at%2022.38.23@2x.png)
 
 2. ~~Use the batch collection function to save images~~
    Currently, the batch collection will only save the image ID as the image's title. This might be a bug in Eagle. We'll see about it later.
-   [image](./images/CleanShot%202024-06-15%20at%2022.52.48@2x.png)
+   ![image](./images/CleanShot%202024-06-15%20at%2022.52.48@2x.png)
+
+3. The saved image will have prompt information added in the annotation.
+   ![image](images/257471718526513_.pic.jpg)

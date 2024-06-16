@@ -6,7 +6,7 @@
   "author": {
     "email": "tobyzsj@gmail.com"
   },
-  "permissions": ["scripting", "webNavigation"],
+  "permissions": ["scripting"],
   "host_permissions": ["https://www.midjourney.com/*"],
   "background": {
     "service_worker": "ws.js"
