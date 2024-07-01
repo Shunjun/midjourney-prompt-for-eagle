@@ -1,4 +1,5 @@
 import { JobInfo } from "./types";
+import { getStorage } from "./utils/storage";
 
 const originalFetch = window.fetch;
 
@@ -18,19 +19,6 @@ const shortMap = {
   s: "stylize",
   v: "version",
 };
-
-const ignoreParameters = ["fast", "chaos", "repeat", "turbo"];
-
-const usefulValueTags = [
-  "aspect",
-  "iw",
-  "quality",
-  "style",
-  "stop",
-  "weird",
-  "niji",
-  "version",
-];
 
 const promptMap: Map<string, JobInfo> = new Map();
 
@@ -157,7 +145,7 @@ function observeBody() {
   };
   // 开始观察 body 元素
   observer.observe(document.body, config);
-  document.removeEventListener("DOMContentLoaded", handleContentLoaded);
+  document.removeEventListener("DOMContentLoaded", observeBody);
 }
 
 function traverseNode(node: Node) {
@@ -175,11 +163,11 @@ function traverseNode(node: Node) {
   }
 }
 
-function handleContentLoaded() {
-  observeBody();
-}
+window.traverseBody = () => {
+  traverseNode(document.body);
+};
 
-document.addEventListener("DOMContentLoaded", handleContentLoaded);
+document.addEventListener("DOMContentLoaded", observeBody);
 
 function addAttributesOnAnchor(node: HTMLAnchorElement) {
   if (fetchingCount) {
@@ -203,53 +191,47 @@ function addAttributesOnImg(node: HTMLImageElement) {
   addAttributes(node, id);
 }
 
-function addAttributes(node: HTMLElement, id: string) {
+async function addAttributes(node: HTMLElement, id: string) {
   const job = promptMap.get(id);
   if (job) {
     const annotation = getAnnotation(job);
-    const tag = genTag(job);
-    node.setAttribute("eagle-title", id);
-    node.setAttribute("eagle-annotation", annotation);
-    node.setAttribute("eagle-tags", tag);
+    const tag = await genTag(job);
+    const promptPosition: "title" | "description" =
+      (await getStorage("promptPosition")) || "description";
+
+    if (promptPosition === "title") {
+      node.setAttribute("eagle-title", id);
+      node.setAttribute("eagle-annotation", annotation);
+    } else {
+      node.setAttribute("eagle-title", annotation);
+      node.setAttribute("eagle-annotation", id);
+    }
+    if (tag) {
+      node.setAttribute("eagle-tags", tag);
+    }
   }
 }
 
-function genTag(job: JobInfo) {
+async function genTag(job: JobInfo) {
   const { full_command = "" } = job;
-  const words = full_command.split(" ").filter(Boolean);
   const tags: string[] = [];
 
-  let index = 0;
-  while (index < words.length) {
-    const word = words[index];
+  const tagRules: string[] = (await getStorage("tagRules")) || [];
 
-    if (word.startsWith("--")) {
-      let parameter = word.replace("--", "");
-      if (parameter in shortMap) {
-        parameter = shortMap[parameter as keyof typeof shortMap];
-      }
+  console.log(tagRules);
 
-      const values = [];
-      if (usefulValueTags.includes(parameter)) {
-        values.push("");
-        while (
-          index < words.length &&
-          words[index + 1] &&
-          !words[index + 1].startsWith("--")
-        ) {
-          index++;
-          values.push(words[index]);
-        }
-      }
-      tags.push(parameter + values.join(" "));
+  if (!tagRules.length) return "";
+
+  tagRules.forEach((ruleStr) => {
+    let rule = new RegExp(ruleStr);
+    if (/^\/.*\/$/.test(ruleStr)) {
+      rule = new RegExp(ruleStr.slice(1, -1));
     }
 
-    if (urlRegex.test(word)) {
-      tags.push("垫图");
-    }
-
-    index++;
-  }
+    full_command.match(rule)?.forEach((match) => {
+      tags.push(match.trim().replace(/^--/, ""));
+    });
+  });
 
   return tags.join(",");
 }

@@ -6,15 +6,21 @@
   "author": {
     "email": "tobyzsj@gmail.com"
   },
-  "permissions": ["scripting"],
-  "host_permissions": ["https://www.midjourney.com/*"],
-  "background": {
-    "service_worker": "ws.js"
-  },
+  "permissions": ["storage"],
+  "content_scripts": [
+    {
+      "matches": ["https://www.midjourney.com/*"],
+      "js": ["xhr-intercept.js"],
+      "run_at": "document_start"
+    }
+  ],
   "action": {
     "default_icon": {
+      "16": "images/icon32.png",
       "32": "images/icon32.png",
+      "48": "images/icon32.png",
       "128": "images/icon128.png"
-    }
+    },
+    "default_popup": "popup.html"
   }
 }
