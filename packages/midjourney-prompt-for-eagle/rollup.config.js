@@ -21,6 +21,13 @@ const config = [
       dir: path.resolve(__dirname, "dist"),
     },
   },
+  {
+    input: path.resolve(__dirname, "src/sw.ts"),
+    plugins: [Typescript()],
+    output: {
+      dir: path.resolve(__dirname, "dist"),
+    },
+  },
 ];
 
 export default config;

@@ -6,11 +6,21 @@
   "author": {
     "email": "tobyzsj@gmail.com"
   },
-  "permissions": ["storage"],
+  "permissions": ["storage", "scripting", "activeTab"],
+  "background": {
+    "service_worker": "sw.js",
+    "type": "module"
+  },
   "content_scripts": [
     {
       "matches": ["https://www.midjourney.com/*"],
       "js": ["xhr-intercept.js"],
+      "run_at": "document_end",
+      "world": "MAIN"
+    },
+    {
+      "matches": ["https://www.midjourney.com/*"],
+      "js": ["extension.js"],
       "run_at": "document_start"
     }
   ],

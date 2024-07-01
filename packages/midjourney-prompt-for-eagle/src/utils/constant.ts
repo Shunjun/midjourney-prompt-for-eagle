@@ -13,3 +13,10 @@ export const defaultTagRules = [
   "--tile",
   "--video",
 ];
+
+// 用来标记用于通信的 script 标签的 id
+export const scriptId = "midjourney-prompt-for-eagle-event-bus";
+
+export const promptPositionKey = "promptPosition";
+export const tagRulesKey = "tagRules";
+export const storageKeys = [promptPositionKey, tagRulesKey];

@@ -32,7 +32,12 @@ import { onBeforeMount, ref, unref } from "vue";
 import Select from "./components/Select.vue";
 import { getStorage, setStorage } from "./utils/storage";
 import List from "./components/List.vue";
-import { defaultTagRules, defaultPromptPosition } from "./utils/constant";
+import {
+  defaultTagRules,
+  defaultPromptPosition,
+  promptPositionKey,
+  tagRulesKey,
+} from "./utils/constant";
 
 const optios = ["title", "description"];
 const titles = ["保存到标题", "保存到描述"];
@@ -40,7 +45,9 @@ const titles = ["保存到标题", "保存到描述"];
 const promptPosition = ref<"title" | "description">(defaultPromptPosition);
 
 onBeforeMount(async () => {
-  const promotPos = await getStorage<"title" | "description">("promptPosition");
+  const promotPos = await getStorage<"title" | "description">(
+    promptPositionKey
+  );
   if (promotPos) {
     promptPosition.value = promotPos;
   }
@@ -50,7 +57,7 @@ const handleChange = (evt: InputEvent) => {
   const target = evt.target as HTMLInputElement;
   const value = target?.value as "title" | "description";
   promptPosition.value = value;
-  setStorage("promptPosition", value);
+  setStorage(promptPositionKey, value);
 };
 
 const tagRules = ref<string[]>(defaultTagRules);
@@ -64,7 +71,7 @@ onBeforeMount(async () => {
 
 const reset = () => {
   tagRules.value = defaultTagRules;
-  setStorage("tagRules", defaultTagRules);
+  setStorage(tagRulesKey, defaultTagRules);
 };
 
 const addTag = (tag: string) => {
@@ -82,7 +89,7 @@ const deleteTag = (idx: number) => {
 function updateTagRules(list: string[]) {
   if (list && Array.isArray(tagRules.value)) {
     tagRules.value = list;
-    setStorage("tagRules", unref(tagRules.value));
+    setStorage(tagRulesKey, unref(tagRules.value));
   }
 }
 </script>

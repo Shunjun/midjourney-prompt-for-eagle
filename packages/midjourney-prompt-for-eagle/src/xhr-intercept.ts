@@ -1,5 +1,6 @@
 import { JobInfo } from "./types";
-import { getStorage } from "./utils/storage";
+import { promptPositionKey, tagRulesKey } from "./utils/constant";
+import { getSessionStorage } from "./utils/storage";
 
 const originalFetch = window.fetch;
 
@@ -145,7 +146,6 @@ function observeBody() {
   };
   // 开始观察 body 元素
   observer.observe(document.body, config);
-  document.removeEventListener("DOMContentLoaded", observeBody);
 }
 
 function traverseNode(node: Node) {
@@ -167,7 +167,18 @@ window.traverseBody = () => {
   traverseNode(document.body);
 };
 
-document.addEventListener("DOMContentLoaded", observeBody);
+function handleReadystatechange() {
+  if (document.readyState === "complete") {
+    observeBody();
+    document.removeEventListener("readystatechange", handleReadystatechange);
+  }
+}
+
+if (document.readyState === "complete") {
+  observeBody();
+} else {
+  document.addEventListener("readystatechange", handleReadystatechange);
+}
 
 function addAttributesOnAnchor(node: HTMLAnchorElement) {
   if (fetchingCount) {
@@ -197,7 +208,7 @@ async function addAttributes(node: HTMLElement, id: string) {
     const annotation = getAnnotation(job);
     const tag = await genTag(job);
     const promptPosition: "title" | "description" =
-      (await getStorage("promptPosition")) || "description";
+      (await getSessionStorage(promptPositionKey)) || "description";
 
     if (promptPosition === "title") {
       node.setAttribute("eagle-title", id);
@@ -216,9 +227,7 @@ async function genTag(job: JobInfo) {
   const { full_command = "" } = job;
   const tags: string[] = [];
 
-  const tagRules: string[] = (await getStorage("tagRules")) || [];
-
-  console.log(tagRules);
+  const tagRules: string[] = (await getSessionStorage(tagRulesKey)) || [];
 
   if (!tagRules.length) return "";
 
@@ -228,10 +237,15 @@ async function genTag(job: JobInfo) {
       rule = new RegExp(ruleStr.slice(1, -1));
     }
 
-    full_command.match(rule)?.forEach((match) => {
+    const match = full_command.match(rule)?.[0];
+    if (match) {
       tags.push(match.trim().replace(/^--/, ""));
-    });
+    }
   });
+
+  if (urlRegex.test(full_command)) {
+    tags.push("垫图");
+  }
 
   return tags.join(",");
 }
