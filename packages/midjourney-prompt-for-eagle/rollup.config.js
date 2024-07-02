@@ -1,7 +1,15 @@
 import path from "node:path";
 import Typescript from "@rollup/plugin-typescript";
+import Terser from "@rollup/plugin-terser";
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
+
+const commonConfig = {
+  plugins: [Typescript(), Terser()],
+  output: {
+    dir: path.resolve(__dirname, "dist"),
+  },
+};
 
 /**
  * @type {import('rollup').RollupOptions}
@@ -9,24 +17,15 @@ const __dirname = path.dirname(new URL(import.meta.url).pathname);
 const config = [
   {
     input: path.resolve(__dirname, "src/xhr-intercept.ts"),
-    plugins: [Typescript()],
-    output: {
-      dir: path.resolve(__dirname, "dist"),
-    },
+    ...commonConfig,
   },
   {
     input: path.resolve(__dirname, "src/extension.ts"),
-    plugins: [Typescript()],
-    output: {
-      dir: path.resolve(__dirname, "dist"),
-    },
+    ...commonConfig,
   },
   {
     input: path.resolve(__dirname, "src/sw.ts"),
-    plugins: [Typescript()],
-    output: {
-      dir: path.resolve(__dirname, "dist"),
-    },
+    ...commonConfig,
   },
 ];
 
