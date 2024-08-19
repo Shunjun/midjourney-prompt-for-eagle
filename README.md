@@ -18,3 +18,9 @@ Add prompt on image annotation when using Eagle to collect images on www.midjour
 
 3. The saved image will have prompt information added in the annotation.
    ![image](images/257471718526513_.pic.jpg)
+
+## ChangeLog
+
+- 0.1.1 (Aug 19, 2024)
+  - fix: save location does not match configuration
+  - fix: invalid in showcase detail
