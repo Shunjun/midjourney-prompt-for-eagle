@@ -1,20 +1,41 @@
 {
-  "name": "chrome-extensions",
+  "name": "midjourney-prompt-for-eagle",
   "private": true,
-  "version": "0.0.1",
-  "description": "chrome extensions congregate",
-  "packageManager": "pnpm@9.7.1+sha512.faf344af2d6ca65c4c5c8c2224ea77a81a5e8859cbc4e06b1511ddce2f0151512431dd19e6aff31f2c6a8f5f2aced9bd2273e1fed7dd4de1868984059d2c4247",
-  "scripts": {},
-  "keywords": [
-    "chrome",
-    "extensions"
-  ],
+  "version": "0.1.1",
+  "description": "save prompt on midjourney for eagle",
   "author": "Shunzi <tobyzsj@gmail.com>",
-  "license": "ISC",
+  "packageManager": "pnpm@9.7.1+sha512.faf344af2d6ca65c4c5c8c2224ea77a81a5e8859cbc4e06b1511ddce2f0151512431dd19e6aff31f2c6a8f5f2aced9bd2273e1fed7dd4de1868984059d2c4247",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "pnpm dev:popup & pnpm dev:script",
+    "dev:script": "rollup -c -w",
+    "dev:popup": "vite",
+    "clear": "rm -rf dist",
+    "build": "pnpm clear && pnpm build:popup && pnpm build:script",
+    "build:script": "rollup -c",
+    "build:popup": "vite build"
+  },
+  "keywords": [
+    "midjourney",
+    "eagle",
+    "prompt",
+    "chrome extension"
+  ],
+  "license": "MIT",
   "devDependencies": {
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^11.1.6",
     "@types/chrome": "^0.0.268",
-    "@types/node": "^20.14.2",
+    "@types/node": "^22.4.1",
+    "@vitejs/plugin-vue": "^5.0.5",
+    "rollup": "^4.18.0",
+    "tslib": "^2.6.3",
     "typescript": "^5.4.5",
     "vite": "^5.3.1"
+  },
+  "dependencies": {
+    "unocss": "^0.61.0",
+    "vue": "^3.4.30"
   }
 }
