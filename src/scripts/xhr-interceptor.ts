@@ -38,10 +38,13 @@ export function mountInspector() {
   // 重写 fetch
   window.fetch = async (...args) => {
     const response = await originalFetch(...args);
-    const cloneResponse = response.clone();
-    if (isJobsUrl(cloneResponse.url)) {
-      const data = await cloneResponse.json(); // 假设返回的是 JSON 数据
-      responseTask(response.url, data);
+    if (isJobsUrl(response.url)) {
+      response
+        .clone()
+        .json()
+        .then((data) => {
+          responseTask(response.url, data);
+        });
     }
     return response; // 返回原始的 response
   };

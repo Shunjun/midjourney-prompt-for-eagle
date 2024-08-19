@@ -91,11 +91,11 @@ async function addAttributes(node: HTMLElement, id: string) {
       (await getSessionStorage(promptPositionKey)) || "description";
 
     if (promptPosition === "title") {
-      node.setAttribute("eagle-title", id);
-      node.setAttribute("eagle-annotation", annotation);
-    } else {
       node.setAttribute("eagle-title", annotation);
       node.setAttribute("eagle-annotation", id);
+    } else {
+      node.setAttribute("eagle-title", id);
+      node.setAttribute("eagle-annotation", annotation);
     }
     if (tag) {
       node.setAttribute("eagle-tags", tag);

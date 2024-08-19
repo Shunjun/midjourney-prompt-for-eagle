@@ -5,7 +5,7 @@
       <div flex flex-col mb-4>
         <label text-xs text-gray-500 py-2 select-none>Prompt 存储位置</label>
         <Select
-          :options="optios"
+          :options="options"
           :titles="titles"
           :model-value="promptPosition"
           :onchange="handleChange"
@@ -39,7 +39,7 @@ import {
   tagRulesKey,
 } from "./utils/constant";
 
-const optios = ["title", "description"];
+const options = ["title", "description"];
 const titles = ["保存到标题", "保存到描述"];
 
 const promptPosition = ref<"title" | "description">(defaultPromptPosition);
