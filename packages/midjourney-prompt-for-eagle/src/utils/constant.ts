@@ -20,3 +20,11 @@ export const scriptId = "midjourney-prompt-for-eagle-event-bus";
 export const promptPositionKey = "promptPosition";
 export const tagRulesKey = "tagRules";
 export const storageKeys = [promptPositionKey, tagRulesKey];
+
+// const shortMap = {
+//   ar: "aspect",
+//   q: "quality",
+//   r: "repeat",
+//   s: "stylize",
+//   v: "version",
+// };

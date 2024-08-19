@@ -1,5 +1,5 @@
-import { storageKeys } from "./utils/constant";
-import { getStorage, setSessionStorage } from "./utils/storage";
+import { storageKeys } from "../utils/constant";
+import { getStorage, setSessionStorage } from "../utils/storage";
 
 async function syncStorage() {
   return Promise.all(

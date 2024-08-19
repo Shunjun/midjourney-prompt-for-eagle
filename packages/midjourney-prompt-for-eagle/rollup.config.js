@@ -16,15 +16,15 @@ const commonConfig = {
  */
 const config = [
   {
-    input: path.resolve(__dirname, "src/xhr-intercept.ts"),
+    input: path.resolve(__dirname, "src/scripts/main.ts"),
     ...commonConfig,
   },
   {
-    input: path.resolve(__dirname, "src/extension.ts"),
+    input: path.resolve(__dirname, "src/scripts/extension.ts"),
     ...commonConfig,
   },
   {
-    input: path.resolve(__dirname, "src/sw.ts"),
+    input: path.resolve(__dirname, "src/scripts/sw.ts"),
     ...commonConfig,
   },
 ];

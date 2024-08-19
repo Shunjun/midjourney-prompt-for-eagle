@@ -1,10 +1,10 @@
-import { setStorage } from "./utils/storage";
+import { setStorage } from "../utils/storage";
 import {
   promptPositionKey,
   tagRulesKey,
   defaultPromptPosition,
   defaultTagRules,
-} from "./utils/constant";
+} from "../utils/constant";
 
 async function getCurrentTabs() {
   return await chrome.tabs.query({ active: true, currentWindow: true });
